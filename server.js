@@ -1,5 +1,5 @@
 import { Telegraf } from "telegraf";
-import { message } from "telegraf/filters";
+import axios from axios;
 import moment from "moment";
 
 const token = "6219172685:AAGQYED-jD08yh3LbnsbewO_En9UgNaqZwo";
@@ -25,7 +25,6 @@ bot.on("text", async (ctx) => {
   // Si el mensaje no es un comando, procesa la conversión
   if (!ctx.message.text.startsWith("/")) {
     try {
-      ctx.reply(ctx.message.text);
       const now = new Date();
       // Formatear la fecha y hora actual en el formato deseado
       const formattedDateFrom = moment(now)
@@ -52,12 +51,10 @@ bot.on("text", async (ctx) => {
       await axios
         .get(url, config)
         .then((response) => {
-          console.log(response);
           const rate = response.data.tasas.USD;
 
           // Obtiene el valor ingresado por el usuario
           const value = parseFloat(ctx.message.text);
-
           // Convierte el valor de CUP a USD
           const convertedValue = value / rate;
 
