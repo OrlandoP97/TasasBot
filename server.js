@@ -64,7 +64,7 @@ bot.on("text", async (ctx) => {
         })
         .catch(function (error) {
           // handle error
-          console.log(error);
+          ctx.reply(error);
         });
     } catch (error) {
       // Si hay un error al obtener la tasa de cambio, envía un mensaje de error al usuario
