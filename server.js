@@ -1,5 +1,5 @@
 import { Telegraf } from "telegraf";
-import axios from axios;
+import axios from "axios";
 import moment from "moment";
 
 const token = "6219172685:AAGQYED-jD08yh3LbnsbewO_En9UgNaqZwo";
