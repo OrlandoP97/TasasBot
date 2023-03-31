@@ -21,7 +21,8 @@ bot.help((ctx) => {
 });
 
 // Maneja los mensajes de texto
-bot.hears("text", async (ctx) => {
+bot.on("text", async (ctx) => {
+  ctx.reply(ctx.message.text);
   // Si el mensaje no es un comando, procesa la conversión
   if (!ctx.message.text.startsWith("/")) {
     try {
