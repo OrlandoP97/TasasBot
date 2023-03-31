@@ -22,10 +22,10 @@ bot.help((ctx) => {
 
 // Maneja los mensajes de texto
 bot.on("text", async (ctx) => {
-  ctx.reply(ctx.message.text);
   // Si el mensaje no es un comando, procesa la conversión
   if (!ctx.message.text.startsWith("/")) {
     try {
+      ctx.reply(ctx.message.text);
       const now = new Date();
       // Formatear la fecha y hora actual en el formato deseado
       const formattedDateFrom = moment(now)
