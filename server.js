@@ -21,7 +21,7 @@ bot.help((ctx) => {
 });
 
 // Maneja los mensajes de texto
-bot.on("text", async (ctx) => {
+bot.hears("text", async (ctx) => {
   // Si el mensaje no es un comando, procesa la conversión
   if (!ctx.message.text.startsWith("/")) {
     try {
@@ -51,7 +51,7 @@ bot.on("text", async (ctx) => {
       await axios
         .get(url, config)
         .then((response) => {
-          console.log(response.data.tasas.USD);
+          console.log(response);
           const rate = response.data.tasas.USD;
 
           // Obtiene el valor ingresado por el usuario
@@ -69,7 +69,9 @@ bot.on("text", async (ctx) => {
         });
     } catch (error) {
       // Si hay un error al obtener la tasa de cambio, envía un mensaje de error al usuario
-      ctx.reply(error);
+      ctx.reply(
+        "Lo siento, no pude obtener la tasa de cambio actual. Por favor, intenta de nuevo más tarde."
+      );
     }
   }
 });
