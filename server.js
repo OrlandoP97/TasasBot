@@ -7,6 +7,8 @@ const token = "6219172685:AAGQYED-jD08yh3LbnsbewO_En9UgNaqZwo";
 
 const bot = new Telegraf(token);
 
+let rate = cache.get("rate");
+
 // Maneja el comando /start
 bot.start((ctx) => {
   ctx.reply(
@@ -50,8 +52,7 @@ bot.on("text", async (ctx) => {
       };
 
       // Obtiene la tasa de cambio actual de CUP a USD desde la caché o la API
-      let rate = cache.get("rate");
-      console.log("guardado: ", rate);
+
       if (!rate) {
         await axios
           .get(url, config)
