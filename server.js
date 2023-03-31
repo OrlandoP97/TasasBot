@@ -1,6 +1,6 @@
 import { Telegraf } from "telegraf";
 import { message } from "telegraf/filters";
-import {} from "moment";
+import moment from "moment";
 
 const token = "6219172685:AAGQYED-jD08yh3LbnsbewO_En9UgNaqZwo";
 
@@ -51,7 +51,8 @@ bot.on("text", async (ctx) => {
       await axios
         .get(url, config)
         .then((response) => {
-          const rate = response.data[0].tasas.USD;
+          console.log(response.data.tasas.USD);
+          const rate = response.data.tasas.USD;
 
           // Obtiene el valor ingresado por el usuario
           const value = parseFloat(ctx.message.text);
@@ -68,9 +69,7 @@ bot.on("text", async (ctx) => {
         });
     } catch (error) {
       // Si hay un error al obtener la tasa de cambio, envía un mensaje de error al usuario
-      ctx.reply(
-        "Lo siento, no pude obtener la tasa de cambio actual. Por favor, intenta de nuevo más tarde."
-      );
+      ctx.reply(error);
     }
   }
 });
