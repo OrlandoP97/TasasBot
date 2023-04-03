@@ -10,6 +10,7 @@ const bot = new Telegraf(token);
 
 const data = JSON.parse(fs.readFileSync("data.json", "utf8"));
 const lastUpdate = moment(data.lastUpdate);
+const now = new Date();
 const hoursDiff = moment.duration(moment(now).diff(lastUpdate)).asHours();
 
 // Maneja el comando /start
@@ -31,7 +32,6 @@ bot.on("text", async (ctx) => {
   // Si el mensaje no es un comando, procesa la conversión
   if (!ctx.message.text.startsWith("/")) {
     try {
-      const now = new Date();
       // Formatear la fecha y hora actual en el formato deseado
       const formattedDateFrom = moment(now)
         .startOf("day")
@@ -44,7 +44,6 @@ bot.on("text", async (ctx) => {
       const encodedDateTo = encodeURIComponent(formattedDateTo);
       // Construir la URL con los parámetros de las fechas
       const url = `https://tasas.eltoque.com/v1/trmi?date_from=${encodedDateFrom}&date_to=${encodedDateTo}`;
-      console.log(url);
 
       const config = {
         headers: {
@@ -56,7 +55,7 @@ bot.on("text", async (ctx) => {
 
       // Obtiene la tasa de cambio actual de CUP a USD desde la caché o la API
 
-      if (hoursDiff < 8) {
+      if (hoursDiff > 8) {
         await axios
           .get(url, config)
           .then((response) => {
@@ -76,7 +75,10 @@ bot.on("text", async (ctx) => {
           });
       } else {
         const rates = data.rates;
-        ctx.reply(`${rates} from cache`);
+        const value = parseFloat(rates);
+        ctx.reply(
+          `${value} CUP = ${convertedValue.toFixed(2)} USD --- From Cache`
+        );
       }
     } catch (error) {
       // Si hay un error al obtener la tasa de cambio, envía un mensaje de error al usuario
