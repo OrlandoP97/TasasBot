@@ -8,7 +8,7 @@ const token = "6219172685:AAGQYED-jD08yh3LbnsbewO_En9UgNaqZwo";
 
 const bot = new Telegraf(token);
 
-const data = JSON.parse(fs.readFileSync("data.json", "utf8"));
+const data = JSON.parse(fs.readFileSync("/public/data.json", "utf8"));
 const lastUpdate = moment(data.lastUpdate);
 const now = new Date();
 const hoursDiff = moment.duration(moment(now).diff(lastUpdate)).asHours();
@@ -65,7 +65,7 @@ bot.on("text", async (ctx) => {
             // Convierte el valor de CUP a USD
             const convertedValue = value / rate;
             const newData = { rates: rate, lastUpdate: now.toISOString() };
-            fs.writeFileSync("data.json", JSON.stringify(newData));
+            fs.writeFileSync("/public/data.json", JSON.stringify(newData));
             // Envía la respuesta al usuario
             ctx.reply(`${value} CUP = ${convertedValue.toFixed(2)} USD`);
           })
@@ -75,6 +75,7 @@ bot.on("text", async (ctx) => {
           });
       } else {
         const rates = data.rates;
+        console.log(rates);
         const value = parseFloat(rates);
         ctx.reply(
           `${value} CUP = ${convertedValue.toFixed(2)} USD --- From Cache`
@@ -82,9 +83,7 @@ bot.on("text", async (ctx) => {
       }
     } catch (error) {
       // Si hay un error al obtener la tasa de cambio, envía un mensaje de error al usuario
-      ctx.reply(
-        "Lo siento, no pude obtener la tasa de cambio actual. Por favor, intenta de nuevo más tarde."
-      );
+      ctx.reply(error);
     }
   }
 });
