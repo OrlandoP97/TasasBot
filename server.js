@@ -1,13 +1,16 @@
 import { Telegraf } from "telegraf";
 import axios from "axios";
 import moment from "moment";
-import cache from "memory-cache";
+
+import fs from "fs";
 
 const token = "6219172685:AAGQYED-jD08yh3LbnsbewO_En9UgNaqZwo";
 
 const bot = new Telegraf(token);
 
-let rate = cache.get("rate");
+const data = JSON.parse(fs.readFileSync("data.json", "utf8"));
+const lastUpdate = moment(data.lastUpdate);
+const hoursDiff = moment.duration(moment(now).diff(lastUpdate)).asHours();
 
 // Maneja el comando /start
 bot.start((ctx) => {
@@ -53,18 +56,17 @@ bot.on("text", async (ctx) => {
 
       // Obtiene la tasa de cambio actual de CUP a USD desde la caché o la API
 
-      if (!rate) {
+      if (hoursDiff < 8) {
         await axios
           .get(url, config)
           .then((response) => {
             const rate = response.data.tasas.USD;
-            // Almacena la tasa de cambio en caché por 8 horas
-            cache.put("rate", rate, 8 * 60 * 60 * 1000);
             // Obtiene el valor ingresado por el usuario
             const value = parseFloat(ctx.message.text);
             // Convierte el valor de CUP a USD
             const convertedValue = value / rate;
-
+            const newData = { rates: rate, lastUpdate: now.toISOString() };
+            fs.writeFileSync("data.json", JSON.stringify(newData));
             // Envía la respuesta al usuario
             ctx.reply(`${value} CUP = ${convertedValue.toFixed(2)} USD`);
           })
@@ -73,7 +75,8 @@ bot.on("text", async (ctx) => {
             ctx.reply(error);
           });
       } else {
-        ctx.reply(`${rate} from cache`);
+        const rates = data.rates;
+        ctx.reply(`${rates} from cache`);
       }
     } catch (error) {
       // Si hay un error al obtener la tasa de cambio, envía un mensaje de error al usuario
