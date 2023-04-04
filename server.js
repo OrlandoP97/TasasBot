@@ -32,8 +32,8 @@ bot.on("text", async (ctx) => {
   if (!ctx.message.text.startsWith("/")) {
     try {
       ctx.reply(ctx.message.text);
+      const now = new Date();
       if (cached) {
-        const now = new Date();
         let lastUpdate = moment(data.lastUpdate);
         const hoursDiff = moment
           .duration(moment(now).diff(lastUpdate))
