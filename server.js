@@ -54,6 +54,9 @@ bot.on("text", async (ctx) => {
       // Codificar las fechas formateadas
       const encodedDateFrom = encodeURIComponent(formattedDateFrom);
       const encodedDateTo = encodeURIComponent(formattedDateTo);
+
+      console.log(encodedDateFrom);
+      console.log(encodedDateTo);
       // Construir la URL con los parámetros de las fechas
       const url = `https://tasas.eltoque.com/v1/trmi?date_from=${encodedDateFrom}&date_to=${encodedDateTo}`;
 
