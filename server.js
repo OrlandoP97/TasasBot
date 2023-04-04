@@ -92,7 +92,7 @@ bot.on("text", async (ctx) => {
           })
           .catch(function (error) {
             // handle error
-            ctx.reply("No se pudo acceder a la API");
+            ctx.reply(error);
           });
       }
     } catch (error) {
