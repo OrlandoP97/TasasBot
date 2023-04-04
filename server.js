@@ -29,7 +29,7 @@ bot.help((ctx) => {
 // Maneja los mensajes de texto
 bot.on("text", async (ctx) => {
   // Si el mensaje no es un comando, procesa la conversión
-  if (!ctx.message.text.startsWith("/")) {
+  if (!ctx.message.text.startsWith("/") && !isNaN(ctx.message.text)) {
     try {
       const now = new Date();
       console.log(now);
@@ -38,7 +38,6 @@ bot.on("text", async (ctx) => {
         const hoursDiff = moment
           .duration(moment(now).diff(lastUpdate))
           .asHours();
-        console.log(hoursDiff);
         if (hoursDiff > 8) {
           cached = false;
         }
@@ -54,9 +53,6 @@ bot.on("text", async (ctx) => {
       // Codificar las fechas formateadas
       const encodedDateFrom = encodeURIComponent(formattedDateFrom);
       const encodedDateTo = encodeURIComponent(formattedDateTo);
-
-      console.log(encodedDateFrom);
-      console.log(encodedDateTo);
       // Construir la URL con los parámetros de las fechas
       const url = `https://tasas.eltoque.com/v1/trmi?date_from=${encodedDateFrom}&date_to=${encodedDateTo}`;
 
@@ -73,20 +69,14 @@ bot.on("text", async (ctx) => {
         const value = parseFloat(ctx.message.text);
         const rate = data.getKey("data");
         const result = JSON.parse(rate);
-        console.log(result);
         // Convierte el valor de CUP a USD
         const convertedValue = value / result.rates;
-        ctx.reply(
-          `${value} CUP = ${convertedValue.toFixed(2)} USD --- from cache`
-        );
+        ctx.reply(`${value} CUP = ${convertedValue.toFixed(2)} USD ---`);
       } else {
-        console.log("entra en else");
         await axios.get(url, config).then((response) => {
           const rate = response.data.tasas.USD;
-          console.log(response);
           // Obtiene el valor ingresado por el usuario
           const value = parseFloat(ctx.message.text);
-          console.log("acaso entra aqui???");
           // Convierte el valor de CUP a USD
           const convertedValue = value / rate;
           const newData = { rates: rate, lastUpdate: now.toISOString() };
@@ -103,6 +93,8 @@ bot.on("text", async (ctx) => {
       // Si hay un error al obtener la tasa de cambio, envía un mensaje de error al usuario
       console.log("error ", error);
     }
+  } else {
+    ctx.reply(`Ingresa un valor numérico correcto`);
   }
 });
 // Inicia el bot
