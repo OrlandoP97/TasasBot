@@ -59,7 +59,8 @@ bot.on("text", async (ctx) => {
       console.log(encodedDateTo);
       // Construir la URL con los parámetros de las fechas
       /* const url = `https://tasas.eltoque.com/v1/trmi?date_from=${encodedDateFrom}&date_to=${encodedDateTo}`; */
-      const url = `https://pokeapi.co/api/v2/pokemon/ditto`;
+      const url =
+        "https://tasas.eltoque.com/v1/trmi?date_from=2023-04-03%2000%3A00%3A01&date_to=2023-04-03%2023%3A59%3A01";
       const config = {
         headers: {
           accept: "*/*",
@@ -78,9 +79,9 @@ bot.on("text", async (ctx) => {
       } else {
         console.log("entra en else");
         await axios
-          .get(url)
+          .get(url, config)
           .then((response) => {
-            /*  const rate = response.tasas.USD; */
+            const rate = response.tasas.USD;
             console.log(response);
             // Obtiene el valor ingresado por el usuario
             const value = parseFloat(ctx.message.text);
