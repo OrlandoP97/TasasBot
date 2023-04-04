@@ -31,8 +31,8 @@ bot.on("text", async (ctx) => {
   // Si el mensaje no es un comando, procesa la conversión
   if (!ctx.message.text.startsWith("/")) {
     try {
-      ctx.reply(ctx.message.text);
       const now = new Date();
+      console.log(now);
       if (cached) {
         let lastUpdate = moment(data.lastUpdate);
         const hoursDiff = moment
@@ -91,11 +91,13 @@ bot.on("text", async (ctx) => {
             ctx.reply(`${value} CUP = ${convertedValue.toFixed(2)} USD`);
           })
           .catch(function (error) {
+            console.log("error de dentro");
             // handle error
             ctx.reply(error);
           });
       }
     } catch (error) {
+      console.log("error de fuera");
       // Si hay un error al obtener la tasa de cambio, envía un mensaje de error al usuario
       console.log("error ", error);
     }
