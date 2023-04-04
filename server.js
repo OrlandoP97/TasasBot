@@ -81,8 +81,10 @@ bot.on("text", async (ctx) => {
           .get(url, config)
           .then((response) => {
             const rate = response.tasas.USD;
+            console.log(response);
             // Obtiene el valor ingresado por el usuario
             const value = parseFloat(ctx.message.text);
+            console.log("acaso entra aqui???");
             // Convierte el valor de CUP a USD
             const convertedValue = value / rate;
             const newData = { rates: rate, lastUpdate: now.toISOString() };
