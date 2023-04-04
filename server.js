@@ -59,8 +59,7 @@ bot.on("text", async (ctx) => {
       console.log(encodedDateTo);
       // Construir la URL con los parámetros de las fechas
       const url = `https://tasas.eltoque.com/v1/trmi?date_from=${encodedDateFrom}&date_to=${encodedDateTo}`;
-      /* const url =
-        "https://tasas.eltoque.com/v1/trmi?date_from=2023-04-03%2000%3A00%3A01&date_to=2023-04-03%2023%3A59%3A01"; */
+
       const config = {
         headers: {
           accept: "*/*",
@@ -70,30 +69,31 @@ bot.on("text", async (ctx) => {
       };
 
       // Obtiene la tasa de cambio actual de CUP a USD desde la caché o la API
-
-      /*  const value = data.getKey("data");
+      if (cached) {
+        const value = data.getKey("data");
         console.log(value);
         ctx.reply(
           `${value} CUP = ${convertedValue.toFixed(2)} USD --- from cache`
-        ); */
-
-      console.log("entra en else");
-      await axios.get(url, config).then((response) => {
-        const rate = response.tasas.USD;
-        console.log(response);
-        // Obtiene el valor ingresado por el usuario
-        const value = parseFloat(ctx.message.text);
-        console.log("acaso entra aqui???");
-        // Convierte el valor de CUP a USD
-        const convertedValue = value / rate;
-        const newData = { rates: rate, lastUpdate: now.toISOString() };
-        /* fs.writeFileSync("./public/datos.json", JSON.stringify(newData)); */
-        data.setKey("data", JSON.stringify(newData));
-        data.save();
-        cached = true;
-        // Envía la respuesta al usuario
-        ctx.reply(`${value} CUP = ${convertedValue.toFixed(2)} USD`);
-      });
+        );
+      } else {
+        console.log("entra en else");
+        await axios.get(url, config).then((response) => {
+          const rate = response.tasas.USD;
+          console.log(response);
+          // Obtiene el valor ingresado por el usuario
+          const value = parseFloat(ctx.message.text);
+          console.log("acaso entra aqui???");
+          // Convierte el valor de CUP a USD
+          const convertedValue = value / rate;
+          const newData = { rates: rate, lastUpdate: now.toISOString() };
+          /* fs.writeFileSync("./public/datos.json", JSON.stringify(newData)); */
+          data.setKey("data", JSON.stringify(newData));
+          data.save();
+          cached = true;
+          // Envía la respuesta al usuario
+          ctx.reply(`${value} CUP = ${convertedValue.toFixed(2)} USD`);
+        });
+      }
     } catch (error) {
       console.log("error de fuera");
       // Si hay un error al obtener la tasa de cambio, envía un mensaje de error al usuario
