@@ -71,11 +71,11 @@ bot.on("text", async (ctx) => {
       // Obtiene la tasa de cambio actual de CUP a USD desde la caché o la API
       if (cached) {
         const value = parseFloat(ctx.message.text);
-        const rate = data.getKey("data").rates;
-        console.log(value);
-        console.log("guardado en cache ", rate);
+        const rate = data.getKey("data");
+        const result = JSON.parse(rate);
+        console.log(result);
         // Convierte el valor de CUP a USD
-        const convertedValue = value / rate;
+        const convertedValue = value / result;
         ctx.reply(
           `${value} CUP = ${convertedValue.toFixed(2)} USD --- from cache`
         );
