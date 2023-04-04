@@ -78,29 +78,22 @@ bot.on("text", async (ctx) => {
         ); */
 
       console.log("entra en else");
-      await axios
-        .get(url, config)
-        .then((response) => {
-          const rate = response.tasas.USD;
-          console.log(response);
-          // Obtiene el valor ingresado por el usuario
-          const value = parseFloat(ctx.message.text);
-          console.log("acaso entra aqui???");
-          // Convierte el valor de CUP a USD
-          const convertedValue = value / rate;
-          const newData = { rates: rate, lastUpdate: now.toISOString() };
-          /* fs.writeFileSync("./public/datos.json", JSON.stringify(newData)); */
-          data.setKey("data", JSON.stringify(newData));
-          data.save();
-          cached = true;
-          // Envía la respuesta al usuario
-          ctx.reply(`${value} CUP = ${convertedValue.toFixed(2)} USD`);
-        })
-        .catch(function (error) {
-          console.log("error de dentro");
-          // handle error
-          ctx.reply(error);
-        });
+      await axios.get(url, config).then((response) => {
+        const rate = response.tasas.USD;
+        console.log(response);
+        // Obtiene el valor ingresado por el usuario
+        const value = parseFloat(ctx.message.text);
+        console.log("acaso entra aqui???");
+        // Convierte el valor de CUP a USD
+        const convertedValue = value / rate;
+        const newData = { rates: rate, lastUpdate: now.toISOString() };
+        /* fs.writeFileSync("./public/datos.json", JSON.stringify(newData)); */
+        data.setKey("data", JSON.stringify(newData));
+        data.save();
+        cached = true;
+        // Envía la respuesta al usuario
+        ctx.reply(`${value} CUP = ${convertedValue.toFixed(2)} USD`);
+      });
     } catch (error) {
       console.log("error de fuera");
       // Si hay un error al obtener la tasa de cambio, envía un mensaje de error al usuario
