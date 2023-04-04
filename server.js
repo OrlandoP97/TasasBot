@@ -71,6 +71,7 @@ bot.on("text", async (ctx) => {
           `${value} CUP = ${convertedValue.toFixed(2)} USD --- from cache`
         );
       } else {
+        console.log("entra en else");
         await axios
           .get(url, config)
           .then((response) => {
@@ -89,12 +90,12 @@ bot.on("text", async (ctx) => {
           })
           .catch(function (error) {
             // handle error
-            ctx.reply(error);
+            ctx.reply("No se pudo acceder a la API");
           });
       }
     } catch (error) {
       // Si hay un error al obtener la tasa de cambio, envía un mensaje de error al usuario
-      ctx.reply(error);
+      console.log("error ", error);
     }
   }
 });
