@@ -3,8 +3,6 @@ import axios from "axios";
 import moment from "moment";
 import flatCache from "flat-cache";
 
-/* import fs from "fs"; */
-
 const token = "6219172685:AAGQYED-jD08yh3LbnsbewO_En9UgNaqZwo";
 
 const bot = new Telegraf(token);
@@ -30,6 +28,7 @@ bot.help((ctx) => {
 
 // Maneja los mensajes de texto
 bot.on("text", async (ctx) => {
+  ctx.reply(ctx.message.text);
   // Si el mensaje no es un comando, procesa la conversión
   if (!ctx.message.text.startsWith("/")) {
     try {
