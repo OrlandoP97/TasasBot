@@ -73,6 +73,7 @@ bot.on("text", async (ctx) => {
         const value = parseFloat(ctx.message.text);
         const rate = data.getKey("data");
         console.log(value);
+        console.log("guardado en cache ", rate);
         // Convierte el valor de CUP a USD
         const convertedValue = value / rate;
         ctx.reply(
