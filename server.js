@@ -72,6 +72,8 @@ bot.on("text", async (ctx) => {
       if (cached) {
         const value = data.getKey("data");
         console.log(value);
+        // Convierte el valor de CUP a USD
+        const convertedValue = value / rate;
         ctx.reply(
           `${value} CUP = ${convertedValue.toFixed(2)} USD --- from cache`
         );
