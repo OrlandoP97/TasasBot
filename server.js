@@ -67,6 +67,8 @@ bot.on("text", async (ctx) => {
 
       // Obtiene la tasa de cambio actual de CUP a USD desde la caché o la API
       if (cached) {
+        const value = data.getKey("data");
+        console.log(value);
         ctx.reply(
           `${value} CUP = ${convertedValue.toFixed(2)} USD --- from cache`
         );
@@ -75,7 +77,7 @@ bot.on("text", async (ctx) => {
         await axios
           .get(url, config)
           .then((response) => {
-            const rate = response.data.tasas.USD;
+            const rate = response.tasas.USD;
             // Obtiene el valor ingresado por el usuario
             const value = parseFloat(ctx.message.text);
             // Convierte el valor de CUP a USD
