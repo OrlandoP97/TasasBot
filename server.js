@@ -78,7 +78,7 @@ bot.on("text", async (ctx) => {
       } else {
         console.log("entra en else");
         await axios.get(url, config).then((response) => {
-          const rate = response.tasas.USD;
+          const rate = response.data.tasas.USD;
           console.log(response);
           // Obtiene el valor ingresado por el usuario
           const value = parseFloat(ctx.message.text);
