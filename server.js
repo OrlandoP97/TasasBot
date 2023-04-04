@@ -2,16 +2,18 @@ import { Telegraf } from "telegraf";
 import axios from "axios";
 import moment from "moment";
 
-import fs from "fs";
+import flatCache from "flat-cache";
+
+/* import fs from "fs"; */
 
 const token = "6219172685:AAGQYED-jD08yh3LbnsbewO_En9UgNaqZwo";
 
 const bot = new Telegraf(token);
 
-const data = JSON.parse(fs.readFileSync("./public/datos.json", "utf8"));
-const lastUpdate = moment(data.lastUpdate);
-const now = new Date();
-const hoursDiff = moment.duration(moment(now).diff(lastUpdate)).asHours();
+let data = flatCache.load("data");
+
+/* const data = JSON.parse(fs.readFileSync("./public/datos.json", "utf8")); */
+let cached = false;
 
 // Maneja el comando /start
 bot.start((ctx) => {
@@ -32,6 +34,18 @@ bot.on("text", async (ctx) => {
   // Si el mensaje no es un comando, procesa la conversión
   if (!ctx.message.text.startsWith("/")) {
     try {
+      if (cached) {
+        const now = new Date();
+        let lastUpdate = moment(data.lastUpdate);
+        const hoursDiff = moment
+          .duration(moment(now).diff(lastUpdate))
+          .asHours();
+        console.log(hoursDiff);
+        if (hoursDiff > 8) {
+          cached = false;
+        }
+      }
+
       // Formatear la fecha y hora actual en el formato deseado
       const formattedDateFrom = moment(now)
         .startOf("day")
@@ -54,8 +68,11 @@ bot.on("text", async (ctx) => {
       };
 
       // Obtiene la tasa de cambio actual de CUP a USD desde la caché o la API
-
-      if (hoursDiff > 8) {
+      if (cached) {
+        ctx.reply(
+          `${value} CUP = ${convertedValue.toFixed(2)} USD --- from cache`
+        );
+      } else {
         await axios
           .get(url, config)
           .then((response) => {
@@ -65,7 +82,10 @@ bot.on("text", async (ctx) => {
             // Convierte el valor de CUP a USD
             const convertedValue = value / rate;
             const newData = { rates: rate, lastUpdate: now.toISOString() };
-            fs.writeFileSync("./public/datos.json", JSON.stringify(newData));
+            /* fs.writeFileSync("./public/datos.json", JSON.stringify(newData)); */
+            data.setKey("data", JSON.stringify(newData));
+            data.save();
+            cached = true;
             // Envía la respuesta al usuario
             ctx.reply(`${value} CUP = ${convertedValue.toFixed(2)} USD`);
           })
@@ -73,13 +93,6 @@ bot.on("text", async (ctx) => {
             // handle error
             ctx.reply(error);
           });
-      } else {
-        const rates = data.rates;
-        console.log(rates);
-        const value = parseFloat(rates);
-        ctx.reply(
-          `${value} CUP = ${convertedValue.toFixed(2)} USD --- From Cache`
-        );
       }
     } catch (error) {
       // Si hay un error al obtener la tasa de cambio, envía un mensaje de error al usuario
