@@ -12,7 +12,7 @@ let data = flatCache.load("data");
 
 /* const data = JSON.parse(fs.readFileSync("./public/datos.json", "utf8")); */
 let cached = false;
-const table = new Table({
+let table = new Table({
   head: ["Moneda", "Valor"],
   colWidths: [10, 10],
 });
