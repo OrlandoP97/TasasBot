@@ -81,14 +81,14 @@ bot.on("text", async (ctx) => {
         const convertedMLC = value / result.rates.MLC;
         const convertedEUR = value / result.rates.EUR;
         table.push(
-          ["USD", `${convertedValue.toFixed(2)} 💵`],
-          ["MLC", `${convertedValue.toFixed(2)} 🇨🇺`],
+          ["USD", `${convertedUSD.toFixed(2)} 💵`],
+          ["MLC", `${convertedMLC.toFixed(2)} 🇨🇺`],
           ["EUR", `${convertedEUR.toFixed(2)} 🇪🇺`]
         );
 
-        const response = `${value} CUP =\n${table.toString()}`;
+        const resp = `${value} CUP =\n${table.toString()} ------ `;
 
-        ctx.reply(response);
+        ctx.reply(resp);
       } else {
         await axios.get(url, config).then((response) => {
           const rateUSD = response.data.tasas.USD;
@@ -115,9 +115,9 @@ bot.on("text", async (ctx) => {
             ["EUR", `${convertedValueEUR.toFixed(2)} 🇪🇺`]
           );
 
-          const response = `${value} CUP =\n${table.toString()}`;
+          const respuesta = `${value} CUP =\n${table.toString()} `;
 
-          ctx.reply(response);
+          ctx.reply(respuesta);
           // Envía la respuesta al usuario
         });
       }
