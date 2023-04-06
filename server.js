@@ -12,6 +12,10 @@ let data = flatCache.load("data");
 
 /* const data = JSON.parse(fs.readFileSync("./public/datos.json", "utf8")); */
 let cached = false;
+const table = new Table({
+  head: ["Moneda", "Valor"],
+  colWidths: [10, 10],
+});
 
 // Maneja el comando /start
 bot.start((ctx) => {
@@ -30,10 +34,6 @@ bot.help((ctx) => {
 // Maneja los mensajes de texto
 bot.on("text", async (ctx) => {
   // Crear la tabla
-  const table = new Table({
-    head: ["Moneda", "Valor"],
-    colWidths: [10, 10],
-  });
 
   // Si el mensaje no es un comando, procesa la conversión
   if (!ctx.message.text.startsWith("/") && !isNaN(ctx.message.text)) {
@@ -89,6 +89,10 @@ bot.on("text", async (ctx) => {
         const resp = `${value} CUP =\n${table.toString()} ------ `;
 
         ctx.reply(resp);
+        table = new Table({
+          head: ["Moneda", "Valor"],
+          colWidths: [10, 10],
+        });
       } else {
         await axios.get(url, config).then((response) => {
           const rateUSD = response.data.tasas.USD;
@@ -117,8 +121,12 @@ bot.on("text", async (ctx) => {
 
           const respuesta = `${value} CUP =\n${table.toString()} `;
 
-          ctx.reply(respuesta);
           // Envía la respuesta al usuario
+          ctx.reply(respuesta);
+          table = new Table({
+            head: ["Moneda", "Valor"],
+            colWidths: [10, 10],
+          });
         });
       }
     } catch (error) {
