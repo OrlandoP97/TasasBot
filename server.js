@@ -2,12 +2,19 @@ import { Telegraf } from "telegraf";
 import axios from "axios";
 import moment from "moment";
 import flatCache from "flat-cache";
+import Table from "cli-table3";
 
 const token = "6219172685:AAGQYED-jD08yh3LbnsbewO_En9UgNaqZwo";
 
 const bot = new Telegraf(token);
 
 let data = flatCache.load("data");
+
+// Crear la tabla
+const table = new Table({
+  head: ["Moneda", "Valor"],
+  colWidths: [10, 10],
+});
 
 /* const data = JSON.parse(fs.readFileSync("./public/datos.json", "utf8")); */
 let cached = false;
@@ -70,22 +77,48 @@ bot.on("text", async (ctx) => {
         const rate = data.getKey("data");
         const result = JSON.parse(rate);
         // Convierte el valor de CUP a USD
-        const convertedValue = value / result.rates;
-        ctx.reply(`${value} CUP = ${convertedValue.toFixed(2)} USD ---`);
+        const convertedUSD = value / result.rates.USD;
+        const convertedMLC = value / result.rates.MLC;
+        const convertedEUR = value / result.rates.EUR;
+        table.push(
+          ["USD", `${convertedValue.toFixed(2)} 💵`],
+          ["MLC", `${convertedValue.toFixed(2)} 🇨🇺`],
+          ["EUR", `${convertedEUR.toFixed(2)} 🇪🇺`]
+        );
+
+        const response = `${value} CUP =\n${table.toString()}`;
+
+        ctx.reply(response);
       } else {
         await axios.get(url, config).then((response) => {
-          const rate = response.data.tasas.USD;
+          const rateUSD = response.data.tasas.USD;
+          const rateMLC = response.data.tasas.MLC;
+          const rateEUR = response.data.tasas.ECU;
           // Obtiene el valor ingresado por el usuario
           const value = parseFloat(ctx.message.text);
           // Convierte el valor de CUP a USD
-          const convertedValue = value / rate;
-          const newData = { rates: rate, lastUpdate: now.toISOString() };
+          const convertedValueUSD = value / rateUSD;
+          const convertedValueMLC = value / rateMLC;
+          const convertedValueEUR = value / rateEUR;
+          const newData = {
+            rates: { USD: rateUSD, EUR: rateEUR, MLC: rateMLC },
+            lastUpdate: now.toISOString(),
+          };
           /* fs.writeFileSync("./public/datos.json", JSON.stringify(newData)); */
           data.setKey("data", JSON.stringify(newData));
           data.save();
           cached = true;
+
+          table.push(
+            ["USD", `${convertedValueUSD.toFixed(2)} 💵`],
+            ["MLC", `${convertedValueMLC.toFixed(2)} 🇨🇺`],
+            ["EUR", `${convertedValueEUR.toFixed(2)} 🇪🇺`]
+          );
+
+          const response = `${value} CUP =\n${table.toString()}`;
+
+          ctx.reply(response);
           // Envía la respuesta al usuario
-          ctx.reply(`${value} CUP = ${convertedValue.toFixed(2)} USD`);
         });
       }
     } catch (error) {
