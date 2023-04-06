@@ -38,6 +38,11 @@ bot.on("text", async (ctx) => {
   // Si el mensaje no es un comando, procesa la conversión
   if (!ctx.message.text.startsWith("/") && !isNaN(ctx.message.text)) {
     try {
+      table = new Table({
+        head: ["Moneda", "Valor"],
+        colWidths: [10, 10],
+      });
+
       const now = new Date();
       console.log(now);
       if (cached) {
@@ -89,10 +94,6 @@ bot.on("text", async (ctx) => {
         const resp = `${value} CUP =\n${table.toString()} ------ `;
 
         ctx.reply(resp);
-        table = new Table({
-          head: ["Moneda", "Valor"],
-          colWidths: [10, 10],
-        });
       } else {
         await axios.get(url, config).then((response) => {
           const rateUSD = response.data.tasas.USD;
@@ -123,10 +124,6 @@ bot.on("text", async (ctx) => {
 
           // Envía la respuesta al usuario
           ctx.reply(respuesta);
-          table = new Table({
-            head: ["Moneda", "Valor"],
-            colWidths: [10, 10],
-          });
         });
       }
     } catch (error) {
